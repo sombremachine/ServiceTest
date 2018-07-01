@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainScreen">
+    tools:context=".Activities.MainScreen">
 
     <!-- TODO: Update blank fragment layout -->
-    <com.example.darkness.servicetest.MainView
+    <com.example.darkness.servicetest.Activities.CustomViews.MainView
         android:id="@+id/MainView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

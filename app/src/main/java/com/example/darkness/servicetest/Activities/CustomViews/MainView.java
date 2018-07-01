@@ -1,4 +1,4 @@
-package com.example.darkness.servicetest;
+package com.example.darkness.servicetest.Activities.CustomViews;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,9 +15,14 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.example.darkness.servicetest.R;
+import com.example.darkness.servicetest.WeatherHelpers;
+import com.example.darkness.servicetest.WeatherSnapshot;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MainView extends View {
     private final String TAG = "MainView";
@@ -29,6 +34,8 @@ public class MainView extends View {
     private HashMap<WeatherHelpers.WeatherType,Drawable> icons = new HashMap<>();
     private Paint paintNormal = new Paint();
     private Paint paintBlur = new Paint();
+
+    private Random random = new Random();
 
     public WeatherSnapshot getSnapShot() {
         return snapShot;
@@ -111,6 +118,9 @@ public class MainView extends View {
         paint.getTextBounds(text, 0, text.length(), bounds);
         return bounds.width();
     }
+    private int getRandomColor(){
+        return Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -120,16 +130,17 @@ public class MainView extends View {
         height = canvas.getHeight();
 
         paintNormal.setColor(0xFF006400);
+        paintNormal.setColor(getRandomColor());
         canvas.drawRect(0,0,width, height, paintNormal);
 
 //        paint.setColor(0xFF7CFC00);
 //        canvas.drawRect((width / 7) * (position),0,(width / 7) * (position + 1),height - 10, paint);
         Drawable dr = icons.get(WeatherHelpers.WeatherType.clear);
         if (snapShot != null) {
-            if (snapShot.isSnowing) {
+            if (snapShot.isSnowing()) {
                 dr = icons.get(WeatherHelpers.WeatherType.snow);
             }
-            if (snapShot.isRaining) {
+            if (snapShot.isRaining()) {
                 dr = icons.get(WeatherHelpers.WeatherType.storm);
             }
 
@@ -137,14 +148,14 @@ public class MainView extends View {
             dr.draw(canvas);
 
             paintBlur.setColor(0xFF000000);
-            int textwidth = setTextSizeForHeight(paintBlur, (float) (width * 0.2), "" + snapShot.temperature + "°С");
-            canvas.drawText("" + snapShot.temperature + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintBlur);
+            int textwidth = setTextSizeForHeight(paintBlur, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
+            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintBlur);
 
 //        paint.reset();
 //        paint.setMaskFilter(null);
             paintNormal.setColor(0xFFFFFFFF);
-            textwidth = setTextSizeForHeight(paintNormal, (float) (width * 0.2), "" + snapShot.temperature + "°С");
-            canvas.drawText("" + snapShot.temperature + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintNormal);
+            textwidth = setTextSizeForHeight(paintNormal, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
+            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintNormal);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.darkness.servicetest;
+package com.example.darkness.servicetest.Activities.CustomViews;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,6 +20,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.example.darkness.servicetest.R;
+import com.example.darkness.servicetest.WeatherHelpers;
+import com.example.darkness.servicetest.WeatherSnapshot;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -122,10 +126,10 @@ public class DaysBar extends View {
             if (snap != null) {
                 Drawable dr = smallIcons.get(WeatherHelpers.WeatherType.clear);
 
-                if (snap.isSnowing) {
+                if (snap.isSnowing()) {
                     dr = smallIcons.get(WeatherHelpers.WeatherType.snow);
                 }
-                if (snap.isRaining) {
+                if (snap.isRaining()) {
                     dr = smallIcons.get(WeatherHelpers.WeatherType.storm);
                 }
 
@@ -134,14 +138,14 @@ public class DaysBar extends View {
 
 
                 Calendar c = Calendar.getInstance();
-                c.setTime(snap.date);
+                c.setTime(snap.getDate());
                 int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
                 int date = c.getTime().getDate();
 
                 paint.setColor(0xFFFFFFFF);
                 setTextSizeForWidth(paint, (width / 14), "12");
 
-                canvas.drawText("" + snap.temperature, (width / 7) * (i) + 25, (float) (height * 0.35), paint);
+                canvas.drawText("" + snap.getTemperature(), (width / 7) * (i) + 25, (float) (height * 0.35), paint);
 
                 canvas.drawText("" + WeatherHelpers.days[dayOfWeek], (width / 7) * (i) + (width / 28), (float) (height * 0.5), paint);
 

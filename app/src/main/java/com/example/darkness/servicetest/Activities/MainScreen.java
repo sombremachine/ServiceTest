@@ -1,6 +1,5 @@
-package com.example.darkness.servicetest;
+package com.example.darkness.servicetest.Activities;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.darkness.servicetest.Dummies;
+import com.example.darkness.servicetest.Activities.CustomViews.MainView;
+import com.example.darkness.servicetest.R;
+import com.example.darkness.servicetest.WeatherSnapshot;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainScreen.OnFragmentInteractionListener} interface
+ * {..@link MainScreen.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link MainScreen#newInstance} factory method to
  * create an instance of this fragment.
@@ -21,16 +25,8 @@ import android.view.ViewGroup;
 public class MainScreen extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private final String TAG = "MainScreen";
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
 
     public MainScreen() {
         // Required empty public constructor
@@ -47,7 +43,7 @@ public class MainScreen extends Fragment {
         Fragment fragment = new MainScreen();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putSerializable("data", Dummus.generateTestData().get(sectionNumber-1));
+        args.putSerializable("data", Dummies.generateTestData().get(sectionNumber-1));
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,12 +71,12 @@ public class MainScreen extends Fragment {
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    // TODO: Rename method, update argument and hook method into UI event
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
 //    @Override
 //    public void onAttach(Context context) {
@@ -98,19 +94,19 @@ public class MainScreen extends Fragment {
 //        super.onDetach();
 //        mListener = null;
 //    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+//
+//    /**
+//     * This interface must be implemented by activities that contain this
+//     * fragment to allow an interaction in this fragment to be communicated
+//     * to the activity and potentially other fragments contained in that
+//     * activity.
+//     * <p>
+//     * See the Android Training lesson <a href=
+//     * "http://developer.android.com/training/basics/fragments/communicating.html"
+//     * >Communicating with Other Fragments</a> for more information.
+//     */
+//    public interface OnFragmentInteractionListener {
+//        // TODO: Update argument type and name
+//        void onFragmentInteraction(Uri uri);
+//    }
 }

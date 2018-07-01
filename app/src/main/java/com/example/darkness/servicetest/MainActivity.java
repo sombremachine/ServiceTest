@@ -14,13 +14,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
+import com.example.darkness.servicetest.Activities.CustomViews.DaysBar;
+import com.example.darkness.servicetest.Activities.MainScreen;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
     boolean bound = false;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         DaysBar daysBar = findViewById(R.id.bottomDaysBar);
         daysBar.setViewPager(mViewPager);
-        daysBar.setWeatherDtata(Dummus.generateTestData());
+        daysBar.setWeatherDtata(Dummies.generateTestData());
 
 //        mViewPager.setCurrentItem();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

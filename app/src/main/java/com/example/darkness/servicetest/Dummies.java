@@ -3,7 +3,7 @@ package com.example.darkness.servicetest;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Dummus {
+public class Dummies {
     public static ArrayList<WeatherSnapshot> generateTestData(){
         ArrayList<WeatherSnapshot> res = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();

@@ -38,7 +38,7 @@
 
     </android.support.v4.view.ViewPager>
 
-    <com.example.darkness.servicetest.DaysBar
+    <com.example.darkness.servicetest.Activities.CustomViews.DaysBar
         android:id="@+id/bottomDaysBar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
