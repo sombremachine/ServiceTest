@@ -1,8 +1,6 @@
 package com.example.darkness.servicetest.Activities.CustomViews;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,12 +13,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.example.darkness.servicetest.Activities.ViewHelpers;
 import com.example.darkness.servicetest.R;
-import com.example.darkness.servicetest.WeatherHelpers;
 import com.example.darkness.servicetest.WeatherSnapshot;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -31,9 +28,11 @@ public class MainView extends View {
     private int width;
     private int height;
     private int position = 0;
-    private HashMap<WeatherHelpers.WeatherType,Drawable> icons = new HashMap<>();
+    private HashMap<ViewHelpers.WeatherType,Drawable> icons = new HashMap<>();
     private Paint paintNormal = new Paint();
     private Paint paintBlur = new Paint();
+    private Paint paintSmallBlur = new Paint();
+    private ArrayList<String> extendedInfo = new ArrayList<>();
 
     private Random random = new Random();
 
@@ -43,19 +42,35 @@ public class MainView extends View {
 
     public void setSnapShot(WeatherSnapshot snapShot) {
         this.snapShot = snapShot;
+
+        if (snapShot.getHumidity() > Integer.MIN_VALUE) {
+            extendedInfo.add("getHumidity: " + snapShot.getHumidity());
+        }
+        if (snapShot.getPressure() > Integer.MIN_VALUE) {
+            extendedInfo.add("getPressure: " + snapShot.getPressure());
+        }
+        if (snapShot.getWindSpeed() > Integer.MIN_VALUE) {
+            extendedInfo.add("getWindSpeed: " + snapShot.getWindSpeed());
+        }
+        if (snapShot.getWindDirection() != null) {
+            extendedInfo.add("getWindDirection: " + snapShot.getWindDirection());
+        }
     }
 
     private void loadIcons(){
-        icons.put(WeatherHelpers.WeatherType.clear, ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny));
-        icons.put(WeatherHelpers.WeatherType.few_clouds,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny_to_cloudy));
-        icons.put(WeatherHelpers.WeatherType.storm,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_heavy_rain));
-        icons.put(WeatherHelpers.WeatherType.snow,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_snowy));
+        icons.put(ViewHelpers.WeatherType.clear, ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny));
+        icons.put(ViewHelpers.WeatherType.few_clouds,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny_to_cloudy));
+        icons.put(ViewHelpers.WeatherType.storm,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_heavy_rain));
+        icons.put(ViewHelpers.WeatherType.snow,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_snowy));
 
 //        paintBlur.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
         paintBlur.setShadowLayer(12, 1, 1, Color.BLACK);
 
         // Important for certain APIs
         setLayerType(LAYER_TYPE_SOFTWARE, paintBlur);
+
+        paintSmallBlur.setShadowLayer(4, 1, 1, Color.BLACK);
+        setLayerType(LAYER_TYPE_SOFTWARE, paintSmallBlur);
     }
 
     public MainView(Context context) {
@@ -133,29 +148,44 @@ public class MainView extends View {
         paintNormal.setColor(getRandomColor());
         canvas.drawRect(0,0,width, height, paintNormal);
 
-//        paint.setColor(0xFF7CFC00);
-//        canvas.drawRect((width / 7) * (position),0,(width / 7) * (position + 1),height - 10, paint);
-        Drawable dr = icons.get(WeatherHelpers.WeatherType.clear);
+        Drawable dr = icons.get(ViewHelpers.WeatherType.clear);
         if (snapShot != null) {
             if (snapShot.isSnowing()) {
-                dr = icons.get(WeatherHelpers.WeatherType.snow);
+                dr = icons.get(ViewHelpers.WeatherType.snow);
             }
             if (snapShot.isRaining()) {
-                dr = icons.get(WeatherHelpers.WeatherType.storm);
+                dr = icons.get(ViewHelpers.WeatherType.storm);
             }
 
             dr.setBounds((width / 4), (width / 20), (3 * width / 4), (width / 2) + (width / 20));
             dr.draw(canvas);
 
             paintBlur.setColor(0xFF000000);
-            int textwidth = setTextSizeForHeight(paintBlur, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
-            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintBlur);
+            int textWidth = setTextSizeForHeight(paintBlur, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
+            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textWidth / 2)), (float) (width * 0.7), paintBlur);
 
-//        paint.reset();
-//        paint.setMaskFilter(null);
             paintNormal.setColor(0xFFFFFFFF);
-            textwidth = setTextSizeForHeight(paintNormal, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
-            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintNormal);
+            textWidth = setTextSizeForHeight(paintNormal, (float) (width * 0.2), "" + snapShot.getTemperature() + "°С");
+            canvas.drawText("" + snapShot.getTemperature() + "°С", (float) ((width / 2) - (textWidth / 2)), (float) (width * 0.7), paintNormal);
+
+            int positionY = (int) (width * 0.7);
+            int stepY = (int) (width * 0.09);
+            int positionX = 0;
+            int lineNumber = 0;
+            paintSmallBlur.setColor(0xFF000000);
+            for (String info:extendedInfo){
+                textWidth = setTextSizeForHeight(paintSmallBlur, (float) (width * 0.07), info);
+                textWidth = setTextSizeForHeight(paintNormal, (float) (width * 0.07), info);
+
+                positionX = (width / 2) - (textWidth / 2);
+                positionY = positionY + stepY;
+                paintNormal.setColor(0xFFFFFFFF);
+
+                canvas.drawText(info, positionX, positionY, paintSmallBlur);
+                canvas.drawText(info, positionX, positionY, paintNormal);
+
+                lineNumber++;
+            }
         }
     }
 
