@@ -103,12 +103,14 @@ public class DaysBar extends View {
         width = canvas.getWidth();
         height = canvas.getHeight();
 
+
+
         Paint paint = new Paint();
 
-        paint.setColor(0xFF006400);
+        paint.setColor(0x44000000);
         canvas.drawRect(0,0,width, height, paint);
 
-        paint.setColor(0xFF7CFC00);
+        paint.setColor(0x44000000);
         canvas.drawRect((width / 7) * (position),0,(width / 7) * (position + 1),height - 10, paint);
         Resources res = getResources();
 
@@ -138,12 +140,12 @@ public class DaysBar extends View {
                 paint.setColor(0xFFFFFFFF);
                 setTextSizeForWidth(paint, (width / 14), "12");
 
-                canvas.drawText("" + snap.getTemperature(), (width / 7) * (i) + 25, (float) (height * 0.35), paint);
+                canvas.drawText("" + snap.getTemperature(), (width / 7) * (i) + 25, (float) (height * 0.45), paint);
 
-                canvas.drawText("" + ViewHelpers.days[dayOfWeek], (width / 7) * (i) + (width / 28), (float) (height * 0.5), paint);
+                canvas.drawText("" + ViewHelpers.days[dayOfWeek], (width / 7) * (i) + (width / 28), (float) (height * 0.65), paint);
 //                canvas.drawText("" + dayOfWeek, (width / 7) * (i) + (width / 28), (float) (height * 0.5), paint);
 
-                canvas.drawText("" + date, (width / 7) * (i) + 25, (float) (height * 0.66), paint);
+                canvas.drawText("" + date, (width / 7) * (i) + 25, (float) (height * 0.85), paint);
             }
         }
     }
@@ -154,7 +156,7 @@ public class DaysBar extends View {
 //        this.width = widthMeasureSpec;
 //        this.height = 100;
         Log.d(TAG,"width : " + width);
-        setMeasuredDimension(widthMeasureSpec,400);
+        setMeasuredDimension(widthMeasureSpec,300);
     }
 
     @Override
