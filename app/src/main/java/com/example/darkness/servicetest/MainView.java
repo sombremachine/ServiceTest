@@ -2,7 +2,9 @@ package com.example.darkness.servicetest;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -25,6 +27,8 @@ public class MainView extends View {
     private int height;
     private int position = 0;
     private HashMap<WeatherHelpers.WeatherType,Drawable> icons = new HashMap<>();
+    private Paint paintNormal = new Paint();
+    private Paint paintBlur = new Paint();
 
     public WeatherSnapshot getSnapShot() {
         return snapShot;
@@ -35,10 +39,16 @@ public class MainView extends View {
     }
 
     private void loadIcons(){
-        icons.put(WeatherHelpers.WeatherType.clear, ContextCompat.getDrawable(getContext(), R.drawable.ic_weather_clear));
-        icons.put(WeatherHelpers.WeatherType.few_clouds,ContextCompat.getDrawable(getContext(), R.drawable.ic_weather_few_clouds));
-        icons.put(WeatherHelpers.WeatherType.storm,ContextCompat.getDrawable(getContext(), R.drawable.ic_weather_storm));
-        icons.put(WeatherHelpers.WeatherType.snow,ContextCompat.getDrawable(getContext(), R.drawable.ic_weather_snow));
+        icons.put(WeatherHelpers.WeatherType.clear, ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny));
+        icons.put(WeatherHelpers.WeatherType.few_clouds,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_sunny_to_cloudy));
+        icons.put(WeatherHelpers.WeatherType.storm,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_heavy_rain));
+        icons.put(WeatherHelpers.WeatherType.snow,ContextCompat.getDrawable(getContext(), R.drawable.ic_large_snowy));
+
+//        paintBlur.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
+        paintBlur.setShadowLayer(12, 1, 1, Color.BLACK);
+
+        // Important for certain APIs
+        setLayerType(LAYER_TYPE_SOFTWARE, paintBlur);
     }
 
     public MainView(Context context) {
@@ -80,6 +90,27 @@ public class MainView extends View {
         // Set the paint for that size.
         paint.setTextSize(desiredTextSize);
     }
+    private int setTextSizeForHeight(Paint paint, float desiredHeight, String text) {
+
+        // Pick a reasonably large value for the test. Larger values produce
+        // more accurate results, but may cause problems with hardware
+        // acceleration. But there are workarounds for that, too; refer to
+        // http://stackoverflow.com/questions/6253528/font-size-too-large-to-fit-in-cache
+        final float testTextSize = 48f;
+
+        // Get the bounds of the text, using our testTextSize.
+        paint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+
+        // Calculate the desired size as a proportion of our testTextSize.
+        float desiredTextSize = testTextSize * desiredHeight / bounds.height();
+
+        // Set the paint for that size.
+        paint.setTextSize(desiredTextSize);
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds.width();
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -88,15 +119,11 @@ public class MainView extends View {
         width = canvas.getWidth();
         height = canvas.getHeight();
 
-        Paint paint = new Paint();
-
-        paint.setColor(0xFF006400);
-        canvas.drawRect(0,0,width, height, paint);
+        paintNormal.setColor(0xFF006400);
+        canvas.drawRect(0,0,width, height, paintNormal);
 
 //        paint.setColor(0xFF7CFC00);
 //        canvas.drawRect((width / 7) * (position),0,(width / 7) * (position + 1),height - 10, paint);
-        Resources res = getResources();
-
         Drawable dr = icons.get(WeatherHelpers.WeatherType.clear);
         if (snapShot != null) {
             if (snapShot.isSnowing) {
@@ -106,14 +133,19 @@ public class MainView extends View {
                 dr = icons.get(WeatherHelpers.WeatherType.storm);
             }
 
-            dr.setBounds((width / 4), (width / 6), (3 * width / 4), (width / 2)+(width / 6));
+            dr.setBounds((width / 4), (width / 20), (3 * width / 4), (width / 2) + (width / 20));
             dr.draw(canvas);
+
+            paintBlur.setColor(0xFF000000);
+            int textwidth = setTextSizeForHeight(paintBlur, (float) (width * 0.2), "" + snapShot.temperature + "°С");
+            canvas.drawText("" + snapShot.temperature + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintBlur);
+
+//        paint.reset();
+//        paint.setMaskFilter(null);
+            paintNormal.setColor(0xFFFFFFFF);
+            textwidth = setTextSizeForHeight(paintNormal, (float) (width * 0.2), "" + snapShot.temperature + "°С");
+            canvas.drawText("" + snapShot.temperature + "°С", (float) ((width / 2) - (textwidth / 2)), (float) (width * 0.7), paintNormal);
         }
-
-        paint.setColor(0xFFFFFFFF);
-        setTextSizeForWidth(paint, (width / 5), "12");
-
-        canvas.drawText("" + snapShot.temperature, (width / 2) - (width / 10), (float) (width * 0.9), paint);
     }
 
     private int measureDimension(int desiredSize, int measureSpec) {
